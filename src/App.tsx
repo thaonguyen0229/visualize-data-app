@@ -33,8 +33,9 @@ export default function App() {
   const onSubmit = useCallback(
     () => {
       const jsonString = (document.getElementById('jsonText')as HTMLTextAreaElement).value;
-      const table = jsonStringToTableNode(jsonString);
-      setNodes([table]);
+      const [tables, edges] = jsonStringToTableNode(jsonString);
+      setNodes(tables);
+      setEdges(edges);
     }, []
   );
 
@@ -47,7 +48,7 @@ export default function App() {
         <ReactFlow
           nodeTypes={nodeTypes}
           nodes={nodes}
-          edges={initialEdges}
+          edges={edges}
           onNodesChange={onNodesChange}
           // onEdgesChange={onEdgesChange}
           // onConnect={onConnect}
