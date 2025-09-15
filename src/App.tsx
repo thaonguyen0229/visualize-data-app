@@ -8,8 +8,8 @@ const nodeTypes = {
 };
 
 const initialNodes = [
-  { id: 'n1', type: 'tableNode', position: { x: 0, y: 0 }, data: { tableName: 'Table 1' } },
-  { id: 'n2', type: 'tableNode', position: { x: 0, y: 100 }, data: { tableName: 'Table 2' } },
+  { id: 'n1', type: 'tableNode', position: { x: 0, y: 0 }, data: { tableName: 'Table 1', columns: [{label: 'id', type: 'string'}, {label: 'name', type: 'string'}] } },
+  { id: 'n2', type: 'tableNode', position: { x: 0, y: 100 }, data: { tableName: 'Table 2', columns: [{label: 'id2', type: 'string'}, {label: 'name2', type: 'string'}]} },
 ];
 // const initialEdges = [{ id: 'n1-n2', source: 'n1', target: 'n2' }];
  

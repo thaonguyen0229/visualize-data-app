@@ -1,17 +1,22 @@
 import { NodeProps, Node } from '@xyflow/react';
 
+export type TableColumn = {
+    label: string;
+    type: string;
+};
+
 export type TableNode = Node<
     {
-        tableName: string
+        tableName: string,
+        columns: TableColumn[],
     }
 >;
 
 export default function TableNode (props: NodeProps<TableNode>) {
     return (
-        <div className='text-updater-node'>
+        <div>
             {props.data.tableName}
-            <div>column 1</div>
-            <div>column 2</div>
+            {props.data.columns.map((column) => <div>{column.label} : {column.type}</div>)}
         </div>
     );
 }
