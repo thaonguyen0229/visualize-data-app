@@ -1,11 +1,11 @@
-import { NodeProps, Node } from '@xyflow/react';
+import { NodeProps, Node, Handle, Position } from '@xyflow/react';
 
 export type TableColumn = {
     label: string;
     type: string;
 };
 
-export type TableNode = Node<
+export type TableNode= Node<
     {
         tableName: string,
         columns: TableColumn[],
@@ -14,9 +14,11 @@ export type TableNode = Node<
 
 export default function TableNode (props: NodeProps<TableNode>) {
     return (
-        <div>
+        <div className='table-node'>
             {props.data.tableName}
             {props.data.columns.map((column) => <div>{column.label} : {column.type}</div>)}
+            <Handle type='source' position={Position.Right} />
+            <Handle type='target' position={Position.Left} />
         </div>
     );
 }
