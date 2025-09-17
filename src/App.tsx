@@ -32,10 +32,23 @@ export default function App() {
   // );
   const onSubmit = useCallback(
     () => {
-      const jsonString = (document.getElementById('jsonText')as HTMLTextAreaElement).value;
+      const jsonString = (document.getElementById('json-text')as HTMLTextAreaElement).value;
       const [tables, edges] = jsonStringToTableNode(jsonString);
       setNodes(tables);
       setEdges(edges);
+    }, []
+  );
+
+  const onFileUpload = useCallback(
+    () => {
+      const fileInputEle = document.getElementById('json-file') as HTMLInputElement;
+      const textAreaEle = document.getElementById('json-text') as HTMLTextAreaElement;
+      const files = fileInputEle.files;
+      if (files && files.length > 0) {
+        const reader = new FileReader();
+        reader.onload = () => textAreaEle.value = (reader.result as string) ?? '';
+        reader.readAsText(files[0])
+      }
     }, []
   );
 
@@ -43,7 +56,9 @@ export default function App() {
   return (
     <div>
       <div style={{ width: '100vw', height: '100vh'}}>
-        <textarea id='jsonText' rows={10} style={{width : '30vw'}} placeholder='Enter json'/>
+        <label htmlFor='json-file'>Upload a JSON file:</label>
+        <input type="file" id='json-file' name='json-file' accept='.json' multiple={false} onChange={onFileUpload} />
+        <textarea id='json-text' rows={10} style={{width : '30vw'}} placeholder='Enter json'/>
         <button onClick={onSubmit}>Submit</button>
         <ReactFlow
           nodeTypes={nodeTypes}
