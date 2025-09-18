@@ -2,21 +2,29 @@ import { TableNode, TableColumn } from "../customNodes/TableNode";
 import { Node, Edge } from "@xyflow/react";
 
 export function jsonStringToTableNode(jsonString: string): [Node[], Edge[]] {
-    let rootTable: TableNode = {
-        id: '0',
-        type:'tableNode',
-        position: {
-            x: 0,
-            y: 0,
-        },
+    const jsonObj = JSON.parse(jsonString);
+    const tableName = 'root';
+    const rootId = '0';
+    const rootPosition = {x: 0, y: 0};
+    const result = jsonToTable(jsonObj, rootId, tableName, rootPosition);
+    return result;
+}
+
+function jsonToTable(jsonObj: any, id: string, name: string, position: {x: number, y: number}): [Node[], Edge[]] {
+    let newTable: TableNode = {
+        id: id,
+        type: 'tableNode',
+        position: position,
         data: {
-            tableName: 'root',
+            tableName: name,
             columns: []
         }
     };
-    let subTables: TableNode[] = [];
+    let otherTables: Node[] = [];
     let edges: Edge[] = [];
-    const jsonObj = JSON.parse(jsonString);
+    let nextId = Number(id) + 1;
+    let nextTablePostion = {x: position.x + 200, y: position.y}
+
     Object.keys(jsonObj).forEach((key) => {
         let col: TableColumn = {
             label: key,
@@ -24,35 +32,20 @@ export function jsonStringToTableNode(jsonString: string): [Node[], Edge[]] {
         }
 
         if (col.type == 'object')  {
-            const tableNumber = subTables.length + 1;
-            let newTable: TableNode = {
-                id: tableNumber.toString() ,
-                type:'tableNode',
-                position: {
-                    x: 200,
-                    y: (tableNumber-1)*200,
-                },
-                data: {
-                    tableName: key,
-                    columns: []
-                }
-            }
-            Object.keys(jsonObj[key]).forEach(subkey => {
-                let subcol: TableColumn = {
-                    label: subkey,
-                    type: typeof jsonObj[key][subkey]
-                };
-                newTable.data.columns.push(subcol);
-            });
-            subTables.push(newTable);
+            const [subTables, subEdges] = jsonToTable(jsonObj[key], nextId.toString(), col.label, nextTablePostion);
+            otherTables = [...otherTables, ...subTables];
+            edges = [...edges, ...subEdges];
             edges.push({
-                id: rootTable.id + '-' + newTable.id,
-                source: rootTable.id,
-                target: newTable.id
+                id: id + "-" + nextId.toString(),
+                source: id,
+                target: nextId.toString()
             });
-        }
 
-        if (col.type != 'object') rootTable.data.columns.push(col);
+            nextId = nextId + otherTables.length + 1;
+            nextTablePostion = {x: nextTablePostion.x, y: nextTablePostion.y + 200}
+        }
+        else newTable.data.columns.push(col);
     });
-    return [[rootTable,...subTables], edges];
+    return [[newTable, ...otherTables],edges];
+
 }
