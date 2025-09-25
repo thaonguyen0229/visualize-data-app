@@ -1,5 +1,5 @@
 import { useState, useCallback } from 'react';
-import { ReactFlow, Background, Controls, Node, applyNodeChanges, applyEdgeChanges, addEdge } from '@xyflow/react';
+import { ReactFlow, Background, Controls, Node, applyNodeChanges } from '@xyflow/react';
 import TableNode from './customNodes/TableNode';
 import '@xyflow/react/dist/style.css';
 import { jsonStringToTableNode } from './utilities/DataUtils';
@@ -30,6 +30,7 @@ export default function App() {
   //   (params) => setEdges((edgesSnapshot) => addEdge(params, edgesSnapshot)),
   //   [],
   // );
+  
   const onSubmit = useCallback(
     () => {
       const jsonString = (document.getElementById('json-text')as HTMLTextAreaElement).value;
@@ -52,14 +53,15 @@ export default function App() {
     }, []
   );
 
- 
   return (
-    <div>
-      <div style={{ width: '100vw', height: '100vh'}}>
+    <div style={{height: '100vh', width: '100vw', display: 'flex', flexDirection: 'row'}}>
+      <div className='side-bar'>
         <label htmlFor='json-file'>Upload a JSON file:</label>
         <input type="file" id='json-file' name='json-file' accept='.json' multiple={false} onChange={onFileUpload} />
-        <textarea id='json-text' rows={10} style={{width : '30vw'}} placeholder='Enter json'/>
+        <textarea id='json-text' rows={10} placeholder='Enter json'/>
         <button onClick={onSubmit}>Submit</button>
+      </div>
+      <div className='design-view'>
         <ReactFlow
           nodeTypes={nodeTypes}
           nodes={nodes}

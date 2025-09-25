@@ -1,7 +1,19 @@
+.side-bar {
+    display: flex;
+    flex-direction: column;
+    width: 30%;
+}
+
+.design-view {
+    height: 100%;
+    width: 100%;
+}
+
 .table-node {
     width: auto;
     display: flex;
     flex-direction: column;
+    padding: 10px;
 }
 
 .table-name {
