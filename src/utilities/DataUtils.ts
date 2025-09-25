@@ -31,7 +31,11 @@ function jsonToTable(jsonObj: any, id: string, name: string, position: {x: numbe
             type: typeof jsonObj[key]
         }
 
-        if (col.type == 'object')  {
+        if (Array.isArray(jsonObj[key])) {
+            const eleType = typeOfArrayElements(jsonObj[key]);
+            col.type = eleType + '[]';
+        }
+        else if (col.type == 'object')  {
             const [subTables, subEdges] = jsonToTable(jsonObj[key], nextId.toString(), col.label, nextTablePostion);
             otherTables = [...otherTables, ...subTables];
             edges = [...edges, ...subEdges];
@@ -48,4 +52,10 @@ function jsonToTable(jsonObj: any, id: string, name: string, position: {x: numbe
     });
     return [[newTable, ...otherTables],edges];
 
+}
+
+function typeOfArrayElements(array: Array<any>): string {
+    const uniqueTypes = array.reduce((acc, ele) =>acc.includes(typeof ele) ? acc : [...acc, typeof ele], []);
+    if (uniqueTypes.length == 1) return uniqueTypes[0];
+    return 'any';
 }
