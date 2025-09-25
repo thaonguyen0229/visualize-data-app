@@ -44,7 +44,7 @@ function jsonToTable(jsonObj: any, id: string, name: string, position: {x: numbe
             nextId = nextId + otherTables.length + 1;
             nextTablePostion = {x: nextTablePostion.x, y: nextTablePostion.y + 200}
         }
-        else newTable.data.columns.push(col);
+        newTable.data.columns.push(col);
     });
     return [[newTable, ...otherTables],edges];
 
