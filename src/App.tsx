@@ -1,5 +1,5 @@
 import { useState, useCallback } from 'react';
-import { ReactFlow, Background, Controls, Node, applyNodeChanges } from '@xyflow/react';
+import { ReactFlow, Background, Controls, Node, applyNodeChanges, applyEdgeChanges, addEdge } from '@xyflow/react';
 import TableNode from './customNodes/TableNode';
 import '@xyflow/react/dist/style.css';
 import { jsonStringToTableNode } from './utilities/DataUtils';
@@ -22,14 +22,14 @@ export default function App() {
     (changes: any) => setNodes((nodesSnapshot) => applyNodeChanges(changes, nodesSnapshot)),
     [],
   );
-  // const onEdgesChange = useCallback(
-  //   (changes: EdgeChange[]) => setEdges((edgesSnapshot) => applyEdgeChanges(changes, edgesSnapshot)),
-  //   [],
-  // );
-  // const onConnect = useCallback(
-  //   (params) => setEdges((edgesSnapshot) => addEdge(params, edgesSnapshot)),
-  //   [],
-  // );
+  const onEdgesChange = useCallback(
+    (changes: any) => setEdges((edgesSnapshot) => applyEdgeChanges(changes, edgesSnapshot)),
+    [],
+  );
+  const onConnect = useCallback(
+    (params: any) => setEdges((edgesSnapshot) => addEdge(params, edgesSnapshot)),
+    [],
+  );
   
   const onSubmit = useCallback(
     () => {
@@ -67,8 +67,8 @@ export default function App() {
           nodes={nodes}
           edges={edges}
           onNodesChange={onNodesChange}
-          // onEdgesChange={onEdgesChange}
-          // onConnect={onConnect}
+          onEdgesChange={onEdgesChange}
+          onConnect={onConnect}
           fitView
         >
           <Background/>
