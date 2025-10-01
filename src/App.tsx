@@ -1,5 +1,5 @@
 import { useState, useCallback } from 'react';
-import { ReactFlow, Background, Controls, Node, applyNodeChanges, applyEdgeChanges, addEdge } from '@xyflow/react';
+import { ReactFlow, Background, Controls, Node, applyNodeChanges, applyEdgeChanges, addEdge, Edge } from '@xyflow/react';
 import TableNode from './customNodes/TableNode';
 import '@xyflow/react/dist/style.css';
 import { jsonStringToTableNode } from './utilities/DataUtils';
@@ -22,10 +22,33 @@ export default function App() {
     (changes: any) => setNodes((nodesSnapshot) => applyNodeChanges(changes, nodesSnapshot)),
     [],
   );
-  const onEdgesChange = useCallback(
-    (changes: any) => setEdges((edgesSnapshot) => applyEdgeChanges(changes, edgesSnapshot)),
-    [],
-  );
+
+  const onEdgesChange = 
+    (changes: any) => {
+      if (changes.type == 'remove') return;
+      console.log('current nodes', nodes);
+      setEdges((edgesSnapshot) => applyEdgeChanges(changes, edgesSnapshot));
+    };
+
+  const onEdgesDelete = (deletedEdges: Edge[]) => {
+    console.log('deleted egdes', deletedEdges);
+    console.log('inital nodes 0', nodes);
+    let newNodesArray = [...nodes];
+    deletedEdges.forEach(edge => {
+      const sourceId = edge.source;
+      const targetId = edge.target;
+      const target = newNodesArray.find((node) => node.id == targetId);
+      let source = newNodesArray.find((node) => node.id == sourceId);
+      console.log("inital source", source);
+      if (source){
+        source.data.columns = (source.data.columns as any[]).filter(col => col.label != target?.data.tableName);
+        console.log('updated source', source);
+      }
+    });
+    console.log("new nodes", nodes)
+    setNodes(newNodesArray);
+  };
+
   const onConnect = useCallback(
     (params: any) => setEdges((edgesSnapshot) => addEdge(params, edgesSnapshot)),
     [],
@@ -68,6 +91,7 @@ export default function App() {
           edges={edges}
           onNodesChange={onNodesChange}
           onEdgesChange={onEdgesChange}
+          onEdgesDelete={onEdgesDelete}
           onConnect={onConnect}
           fitView
         >
