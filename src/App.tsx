@@ -1,5 +1,5 @@
-import { useState, useCallback } from 'react';
-import { ReactFlow, Background, Controls, Node, applyNodeChanges, applyEdgeChanges, addEdge, Edge, useNodesState, useEdgesState } from '@xyflow/react';
+import { useCallback } from 'react';
+import { ReactFlow, Background, Controls, Node, addEdge, Edge, useNodesState, useEdgesState } from '@xyflow/react';
 import TableNode from './customNodes/TableNode';
 import '@xyflow/react/dist/style.css';
 import { jsonStringToTableNode } from './utilities/DataUtils';
