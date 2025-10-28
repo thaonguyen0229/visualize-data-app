@@ -19,8 +19,6 @@ export default function App() {
   const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
 
   const onEdgesDelete = (deletedEdges: Edge[]) => {
-    console.log('deleted egdes', deletedEdges);
-    console.log('inital nodes 0', nodes);
     let newNodesArray = nodes.map(node => {
       const connectedEdge = deletedEdges.find((edge) => edge.source == node.id);
       if (connectedEdge) {
