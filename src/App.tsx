@@ -1,5 +1,5 @@
 import { useState, useCallback } from 'react';
-import { ReactFlow, Background, Controls, Node, applyNodeChanges, applyEdgeChanges, addEdge, Edge } from '@xyflow/react';
+import { ReactFlow, Background, Controls, Node, applyNodeChanges, applyEdgeChanges, addEdge, Edge, useNodesState, useEdgesState } from '@xyflow/react';
 import TableNode from './customNodes/TableNode';
 import '@xyflow/react/dist/style.css';
 import { jsonStringToTableNode } from './utilities/DataUtils';
@@ -15,37 +15,21 @@ const initialNodes: Node[] = [
 const initialEdges = [{ id: 'n1-n2', source: 'n1', target: 'n2' }];
  
 export default function App() {
-  const [nodes, setNodes] = useState(initialNodes);
-  const [edges, setEdges] = useState(initialEdges);
- 
-  const onNodesChange = useCallback(
-    (changes: any) => setNodes((nodesSnapshot) => applyNodeChanges(changes, nodesSnapshot)),
-    [],
-  );
-
-  const onEdgesChange = 
-    (changes: any) => {
-      if (changes.type == 'remove') return;
-      console.log('current nodes', nodes);
-      setEdges((edgesSnapshot) => applyEdgeChanges(changes, edgesSnapshot));
-    };
+  const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
+  const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
 
   const onEdgesDelete = (deletedEdges: Edge[]) => {
     console.log('deleted egdes', deletedEdges);
     console.log('inital nodes 0', nodes);
-    let newNodesArray = [...nodes];
-    deletedEdges.forEach(edge => {
-      const sourceId = edge.source;
-      const targetId = edge.target;
-      const target = newNodesArray.find((node) => node.id == targetId);
-      let source = newNodesArray.find((node) => node.id == sourceId);
-      console.log("inital source", source);
-      if (source){
-        source.data.columns = (source.data.columns as any[]).filter(col => col.label != target?.data.tableName);
-        console.log('updated source', source);
+    let newNodesArray = nodes.map(node => {
+      const connectedEdge = deletedEdges.find((edge) => edge.source == node.id);
+      if (connectedEdge) {
+        const target = nodes.find((targetNode) => targetNode.id == connectedEdge.target);
+        const updatedNode: Node = {id: node.id, type: 'tableNode', position: node.position, data: {tableName: node.data.tableName, columns: (node.data.columns as any[]).filter(col => col.label != target?.data.tableName)}}
+        return updatedNode;
       }
+      return node;
     });
-    console.log("new nodes", nodes)
     setNodes(newNodesArray);
   };
 
