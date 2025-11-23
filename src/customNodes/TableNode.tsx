@@ -1,4 +1,6 @@
 import { NodeProps, Node, Handle, Position } from '@xyflow/react';
+import { Dialog } from '@mui/material'; 
+import { useState } from 'react';
 
 export type TableColumn = {
     label: string;
@@ -13,14 +15,18 @@ export type TableNode= Node<
 >;
 
 export default function TableNode (props: NodeProps<TableNode>) {
+    const [isOpenDialog, setIsOpenDialog] = useState(false);
+
     return (
         <div className='table-node'>
             <div className='table-name'>{props.data.tableName}</div>
-            <div className='attributes-list'>
-                {props.data.columns.map((column) => <div>{column.label} : {column.type}</div>)}
-            </div>
             <Handle type='source' position={Position.Right} />
             <Handle type='target' position={Position.Left} />
+            <div className='attributes-list'>
+                {props.data.columns.map((column) => <div className='attribute-item'>{column.label} : {column.type}</div>)}
+            </div>
+            <button className='add-attribute-button' onClick={() => setIsOpenDialog(true)}>Add attribute</button>
+            <Dialog onClose={() => setIsOpenDialog(false)} open={isOpenDialog}>testing</Dialog>
         </div>
     );
 }
